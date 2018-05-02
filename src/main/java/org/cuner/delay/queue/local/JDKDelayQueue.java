@@ -14,8 +14,9 @@ public class JDKDelayQueue implements org.cuner.delay.queue.DelayQueue {
 
     private DelayQueue<JDKDelayMessage> delayQueue = new DelayQueue<JDKDelayMessage>();
 
+    //参数传入毫秒
     public JDKDelayQueue(long delay) {
-        this.delay = delay * 1000000000;
+        this.delay = delay * 1000000;
     }
 
     public String getQueueName() {

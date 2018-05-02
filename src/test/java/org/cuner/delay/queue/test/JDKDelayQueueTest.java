@@ -11,7 +11,7 @@ public class JDKDelayQueueTest {
 
     @Test
     public void JDKDelayQueueTest() throws Exception {
-        JDKDelayQueue jdkDelayQueue = new JDKDelayQueue(10);
+        JDKDelayQueue jdkDelayQueue = new JDKDelayQueue(5000);
         jdkDelayQueue.push("first message");
         System.out.println("first push time: " + System.currentTimeMillis() / 1000);
         jdkDelayQueue.push("second message");
