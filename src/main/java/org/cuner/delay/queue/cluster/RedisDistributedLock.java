@@ -17,7 +17,6 @@ public class RedisDistributedLock {
     private long lockTimeout;
 
     /**
-     *
      * @param host
      * @param port
      * @param lockTimeout 毫秒
@@ -36,9 +35,11 @@ public class RedisDistributedLock {
      */
     public void lock(String key) {
         String lockKey = LOCK_PREFIX + key;
-        Jedis jedis = jedisPool.getResource();
-        try {
-            while (true) {
+
+        while (true) {
+            //防止 jedis链接断开导致消费失败
+            Jedis jedis = jedisPool.getResource();
+            try {
                 Long locked = jedis.setnx(lockKey, String.valueOf(System.currentTimeMillis()));
                 if (locked != null && locked == 1) {
                     //获取到了锁 跳出循环
@@ -52,15 +53,15 @@ public class RedisDistributedLock {
                     //原有的key已经超时失效了
                     String oldLockTime = jedis.getSet(lockKey, String.valueOf(System.currentTimeMillis()));
                     now = System.currentTimeMillis();
-                    if (now - Long.parseLong(oldLockTime) > lockTimeout) {
+                    if (StringUtils.isNotBlank(oldLockTime) && now - Long.parseLong(oldLockTime) > lockTimeout) {
                         //表示之前的锁已经过期 且 已经获取到了锁(设置了新的value)
                         return;
                     }
 
                 }
+            } finally {
+                jedis.close();
             }
-        } finally {
-            jedis.close();
         }
     }
 
