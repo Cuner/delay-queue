@@ -39,12 +39,11 @@ public class RedisDelayQueue implements DelayQueue {
     public RedisDelayQueue(String queueName, long delay, boolean concurrent, String redisHost, int redisPort) {
         this.queueName = QUEUE_PREFIX + queueName;
         this.concurrent = concurrent;
+        this.delay = delay * 1000000;
 
         if (this.concurrent) {
-            lock = new RedisDistributedLock(redisHost, redisPort, delay + 10000);
+            lock = new RedisDistributedLock(redisHost, redisPort,  10000);
         }
-
-        this.delay = delay * 1000000;
 
         JedisPoolConfig config = new JedisPoolConfig();
         config.setMaxIdle(5);
