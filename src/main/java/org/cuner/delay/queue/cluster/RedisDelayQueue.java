@@ -57,7 +57,7 @@ public class RedisDelayQueue implements DelayQueue {
         return this.queueName;
     }
 
-    public boolean push(String message) throws Exception {
+    public boolean push(String message) {
         Jedis jedis = jedisPool.getResource();
         try {
             DelayMessage delayMessage = new DelayMessage(delay, null, message);
@@ -68,7 +68,7 @@ public class RedisDelayQueue implements DelayQueue {
         }
     }
 
-    public DelayMessage pop() throws Exception {
+    public DelayMessage pop() {
         while (true) {
             Long waitTime = null;
             Jedis jedis = jedisPool.getResource();
@@ -94,7 +94,11 @@ public class RedisDelayQueue implements DelayQueue {
                 }
 
                 if (waitTime != null) {
-                    Thread.sleep(waitTime / 1000);
+                    try {
+                        Thread.sleep(waitTime / 1000);
+                    } catch (InterruptedException e) {
+                        //do nothing
+                    }
                 }
 
             } finally {
@@ -109,7 +113,7 @@ public class RedisDelayQueue implements DelayQueue {
     public void ack(String tmpKey) {
     }
 
-    public long length() throws Exception {
+    public long length() {
         Jedis jedis = jedisPool.getResource();
         try {
             Long length = jedis.llen(this.queueName);
@@ -123,7 +127,7 @@ public class RedisDelayQueue implements DelayQueue {
         }
     }
 
-    public boolean clean() throws Exception {
+    public boolean clean() {
         Jedis jedis = jedisPool.getResource();
         try {
             Long result = jedis.del(this.queueName);

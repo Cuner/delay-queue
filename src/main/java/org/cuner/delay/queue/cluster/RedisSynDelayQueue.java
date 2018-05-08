@@ -92,7 +92,7 @@ public class RedisSynDelayQueue implements DelayQueue {
         return this.queueName;
     }
 
-    public boolean push(String message) throws Exception {
+    public boolean push(String message) {
         Jedis jedis = jedisPool.getResource();
         try {
             DelayMessage delayMessage = new DelayMessage(delay, null, message);
@@ -103,7 +103,7 @@ public class RedisSynDelayQueue implements DelayQueue {
         }
     }
 
-    public DelayMessage pop() throws Exception {
+    public DelayMessage pop() {
         while (true) {
             Long waitTime;
             Jedis jedis = jedisPool.getResource();
@@ -122,7 +122,11 @@ public class RedisSynDelayQueue implements DelayQueue {
                         if (delayMessage.getExpire() > System.nanoTime()) {
                             // 消息未到可执行状态,休眠等待
                             waitTime = delayMessage.getExpire() - System.nanoTime();
-                            Thread.sleep(waitTime);
+                            try {
+                                Thread.sleep(waitTime);
+                            } catch (InterruptedException e) {
+                                // do nothing
+                            }
                         }
                         delayMessage.setTmpKey(tmpKey);
                         return delayMessage;
@@ -161,7 +165,7 @@ public class RedisSynDelayQueue implements DelayQueue {
         removeExeMsg(tmpKey);
     }
 
-    public long length() throws Exception {
+    public long length() {
         Jedis jedis = jedisPool.getResource();
         try {
             Long result = jedis.llen(queueName);
@@ -175,7 +179,7 @@ public class RedisSynDelayQueue implements DelayQueue {
         }
     }
 
-    public boolean clean() throws Exception {
+    public boolean clean() {
         Jedis jedis = jedisPool.getResource();
         try {
             Long result = jedis.del(queueName);
