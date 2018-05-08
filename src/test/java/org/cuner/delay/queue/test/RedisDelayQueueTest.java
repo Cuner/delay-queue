@@ -17,7 +17,7 @@ public class RedisDelayQueueTest {
     @Test
     public void testRedisDistributedDelayQueue() {
         RedisSynDelayQueue delayQueue = DelayQueueFactory.getRedisSyncDelayQueue("testdisqueue", 1000, false, "localhost", 6379);
-        //RedisDelayQueue delayQueue = DelayQueueFactory.getRedisLockDelayQueue("testdisqueue", 1000, false, "localhost", 6379);
+//        RedisDelayQueue delayQueue = DelayQueueFactory.getRedisLockDelayQueue("testdisqueue", 1000, false, "localhost", 6379);
         for (int i = 0; i < 100000; i++) {
             delayQueue.push(i + "");
         }
