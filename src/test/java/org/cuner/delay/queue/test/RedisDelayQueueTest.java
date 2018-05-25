@@ -2,8 +2,7 @@ package org.cuner.delay.queue.test;
 
 import org.cuner.delay.queue.DelayMessage;
 import org.cuner.delay.queue.DelayQueueFactory;
-import org.cuner.delay.queue.cluster.RedisDelayQueue;
-import org.cuner.delay.queue.cluster.RedisSynDelayQueue;
+import org.cuner.delay.queue.cluster.RedisConcurrentDelayQueue;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -16,8 +15,8 @@ public class RedisDelayQueueTest {
 
     @Test
     public void testRedisDistributedDelayQueue() {
-        RedisSynDelayQueue delayQueue = DelayQueueFactory.getRedisSyncDelayQueue("testdisqueue", 1000, false, "localhost", 6379);
-//        RedisDelayQueue delayQueue = DelayQueueFactory.getRedisLockDelayQueue("testdisqueue", 1000, false, "localhost", 6379);
+        RedisConcurrentDelayQueue delayQueue = DelayQueueFactory.getRedisConcurrentDelayQueue("testdisqueue", 1000, false, "localhost", 6379);
+//        RedisSynDelayQueue delayQueue = DelayQueueFactory.getRedisSynDelayQueue("testdisqueue", 1000, false, "localhost", 6379);
         for (int i = 0; i < 100000; i++) {
             delayQueue.push(i + "");
         }
@@ -27,8 +26,8 @@ public class RedisDelayQueueTest {
         for (int i = 0; i < 10; i++) {
             final int ii = i;
             Thread t = new Thread(() -> {
-                RedisSynDelayQueue delayQueue1 = DelayQueueFactory.getRedisSyncDelayQueue("testdisqueue", 1000, false, "localhost", 6379);
-                //RedisDelayQueue delayQueue1 = DelayQueueFactory.getRedisLockDelayQueue("testdisqueue", 1000, false, "localhost", 6379);
+                RedisConcurrentDelayQueue delayQueue1 = DelayQueueFactory.getRedisConcurrentDelayQueue("testdisqueue", 1000, false, "localhost", 6379);
+                //RedisSynDelayQueue delayQueue1 = DelayQueueFactory.getRedisSynDelayQueue("testdisqueue", 1000, false, "localhost", 6379);
                 long start = System.currentTimeMillis();
                 for (int j = 0; j < 10000; j++) {
                     DelayMessage message = delayQueue1.pop();

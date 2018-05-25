@@ -1,7 +1,7 @@
 package org.cuner.delay.queue;
 
-import org.cuner.delay.queue.cluster.RedisDelayQueue;
 import org.cuner.delay.queue.cluster.RedisSynDelayQueue;
+import org.cuner.delay.queue.cluster.RedisConcurrentDelayQueue;
 import org.cuner.delay.queue.local.JDKDelayQueue;
 
 /**
@@ -22,8 +22,8 @@ public class DelayQueueFactory {
      * @return
      * @throws Exception
      */
-    public static RedisDelayQueue getRedisLockDelayQueue(String queueName, long delay, boolean concurrent, String redisHost, int redisPort) {
-        return new RedisDelayQueue(queueName, delay, concurrent, redisHost, redisPort);
+    public static RedisSynDelayQueue getRedisSynDelayQueue(String queueName, long delay, boolean concurrent, String redisHost, int redisPort) {
+        return new RedisSynDelayQueue(queueName, delay, concurrent, redisHost, redisPort);
     }
 
     /**
@@ -39,8 +39,8 @@ public class DelayQueueFactory {
      * @return
      * @throws Exception
      */
-    public static RedisSynDelayQueue getRedisSyncDelayQueue(String queueName, long delay, boolean autoAck, String redisHost, int redisPort) {
-        return new RedisSynDelayQueue(queueName, delay, autoAck, redisHost, redisPort);
+    public static RedisConcurrentDelayQueue getRedisConcurrentDelayQueue(String queueName, long delay, boolean autoAck, String redisHost, int redisPort) {
+        return new RedisConcurrentDelayQueue(queueName, delay, autoAck, redisHost, redisPort);
     }
 
     /**
